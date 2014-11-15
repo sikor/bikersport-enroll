@@ -9,5 +9,6 @@ urlpatterns = patterns('',
                        # url(r'^blog/', include('blog.urls')),
 
                        url(r'^event/(\w+)$', views.event, name="event"),
+                       url(r'^$', views.index, name="index")
 )
 
