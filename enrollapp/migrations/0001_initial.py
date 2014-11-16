@@ -5,17 +5,6 @@ from django.contrib.auth.models import User
 from django.db import models, migrations
 from django.conf import settings
 
-def insert_superuser(apps, schema_editor):
-    admin_id = 'root'
-    admin_email = 'root@o2.pl'
-    admin_password = 'ktmstrada'
-    # admin exists?
-    user_list = User.objects.filter(username=admin_id)
-    if len(user_list) == 0:
-        User.objects.create_superuser(admin_id, admin_email, admin_password)
-
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -62,6 +51,5 @@ class Migration(migrations.Migration):
             options={
             },
             bases=(models.Model,),
-        ),
-        migrations.RunPython(insert_superuser)
+        )
     ]
