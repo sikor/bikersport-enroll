@@ -3,17 +3,19 @@
 {% block content %}
 
     <div class="row">
-    <div class="col-md-12">
-        <div class="page-header">
-            <h1>{{ event.name }}</h1>
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>{{ event.name }}</h1>
+            </div>
+            {% if user.is_anonymous %}
+                <a href="{% provider_login_url "facebook" method="js_sdk" next=request.path %}">W celu zapisania się na
+                    zawody
+                    kliknij
+                    tutaj.</a>
+            {% else %}
+                <h2>Witaj {{ user.first_name }}</h2>
+            {% endif %}
         </div>
-        {% if user.is_anonymous %}
-            <a href="{% provider_login_url "facebook" method="js_sdk" %}">W celu zapisania się na zawody kliknij
-                tutaj.</a>
-        {% else %}
-            <h2>Witaj {{ user.first_name }}</h2>
-        {% endif %}
-</div>
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -31,12 +33,13 @@
                             <td>
                                 {% if term.participants.all %}
                                     {% for participant in term.participants.all %}
-                                        {{ participant.first_name }} {{ participant.last_name }}<br/>
+                                      <a href="{{ participant.socialaccount_set.get.extra_data.link|default:"#" }}">
+                                          {{ participant.first_name }}
+                                          {{ participant.last_name }}</a><br/>
                                     {% endfor %}
                                 {% else %}
                                     Wolny
                                 {% endif %}
-
                             </td>
                         </tr>
                     {% endfor %}
@@ -45,6 +48,7 @@
 
             {% if user.is_active %}
                 {% if term %}
+                    <p>Jesteś zapisany na termin: {{ term }}</p>
                     <form action="{% url 'unenroll' event.urlname %}" method="post" role="form" class="form-horizontal">
                         {% csrf_token %}
                         <div class="form-group">
@@ -54,6 +58,7 @@
                         </div>
                     </form>
                 {% else %}
+                    <p>Można wybrać dogodny termin i się zapisać</p>
                     <form action="{% url 'enroll' event.urlname %}" method="post" role="form" class="form-horizontal">
                         {% csrf_token %}
                         {% for field in enroll_form %}
@@ -68,7 +73,7 @@
                         {% endfor %}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Zapisz</button>
+                                <button type="submit" class="btn btn-default">Zapisz się</button>
                             </div>
                         </div>
                     </form>
@@ -79,31 +84,32 @@
 
             {% endif %}
         </div>
-                {% if user.is_active %}
-        <div class="col-md-4">
-            <h3>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych inforamcji:</h3>
-            <form action="{% url 'user_details' event.urlname %}" method="post" role="form" class="form-horizontal">
-                {% csrf_token %}
-                {% for field in user_form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}"
-                               class="col-sm-2 control-label">{{ field.label }}</label>
+        {% if user.is_active %}
+            <div class="col-md-4">
+                <h3>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych inforamcji:</h3>
 
-                        <div class="col-sm-10">
-                            {{ field }} {{ field.errors }}
+                <form action="{% url 'user_details' event.urlname %}" method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    {% for field in user_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}"
+                                   class="col-sm-2 control-label">{{ field.label }}</label>
+
+                            <div class="col-sm-10">
+                                {{ field }} {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Zapisz</button>
                         </div>
                     </div>
-                {% endfor %}
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default">Zapisz</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+                </form>
+            </div>
+            </div>
 
-    {% endif %}
+        {% endif %}
 
 
 

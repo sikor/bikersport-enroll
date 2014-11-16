@@ -34,9 +34,9 @@ class Term(models.Model):
 
     def __str__(self):
         if len(self.participants.all()):
-            status = ', '.join(user.last_name for user in self.participants.all() )
+            status = ', '.join(user.first_name for user in self.participants.all())
         else:
-            status = "Wolny"
+            status = "Pusty"
         return "%s (%s)" % (self.name, status)
 
 
