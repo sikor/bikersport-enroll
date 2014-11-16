@@ -33,7 +33,7 @@
                             <td>
                                 {% if term.participants.all %}
                                     {% for participant in term.participants.all %}
-                                      <a href="{{ participant.socialaccount_set.get.extra_data.link|default:"#" }}">
+                                      <a href="{{ participant.socialaccount_set.get.extra_data.link|default:"#" }}" target="_blank">
                                           {{ participant.first_name }}
                                           {{ participant.last_name }}</a><br/>
                                     {% endfor %}
