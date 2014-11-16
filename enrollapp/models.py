@@ -10,7 +10,7 @@ class UserDetails(models.Model):
     weight = models.IntegerField(_("Waga [kg]"))
     height = models.IntegerField(_("Wzrost [cm]"))
     age = models.IntegerField(_("Wiek"), blank=True, null=True)
-    sex = models.CharField( max_length=6, choices=(('Male', 'Male'), ('Female', 'Female')), blank=True, null=True)
+    sex = models.CharField(max_length=6, choices=(('Male', 'Male'), ('Female', 'Female')), blank=True, null=True)
 
     def __str__(self):
         return self.user.username

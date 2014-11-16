@@ -86,7 +86,7 @@
         </div>
         {% if user.is_active %}
             <div class="col-md-4">
-                <h3>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych inforamcji:</h3>
+                <h3>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych informacji:</h3>
 
                 <form action="{% url 'user_details' event.urlname %}" method="post" role="form" class="form-horizontal">
                     {% csrf_token %}
@@ -110,9 +110,5 @@
             </div>
 
         {% endif %}
-
-
-
-
 
 {% endblock %}

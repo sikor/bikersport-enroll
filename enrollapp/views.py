@@ -20,10 +20,6 @@ class EnrollForm(forms.Form):
         self.fields['term'].choices = tuple(choices)
 
 
-class UserDetailsForm(forms.ModelForm):
-    class Meta:
-        model = UserDetails
-        fields = ['weight', 'height']
 
 
 def event(request, urlname):
@@ -71,12 +67,20 @@ def unenroll(request, urlname):
         enrollment.delete()
     return redirect('event', urlname)
 
+class UserDetailsForm(forms.ModelForm):
+    class Meta:
+        model = UserDetails
+        fields = ['weight', 'height']
+
 
 @login_required
 def user_details(request, urlname):
     user = request.user
     if request.method == 'POST':
-        form = UserDetailsForm(request.POST)
+        if len(UserDetails.objects.filter(user=user)) > 0:
+            form = UserDetailsForm(request.POST, instance=request.user.details)
+        else:
+            form = UserDetailsForm(request.POST)
         if form.is_valid():
             details = form.save(commit=False)
             details.user = user
