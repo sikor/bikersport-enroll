@@ -1,0 +1,12 @@
+{% extends 'enrollapp/base.html' %}
+
+
+
+{% block content %}
+    <h1>Wydarzenia</h1>
+    <ul>
+        {% for event in events %}
+            <li><a href="{% url 'event' event.urlname %}">{{ event.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

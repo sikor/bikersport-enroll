@@ -1,16 +1,16 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 
 
 class UserDetails(models.Model):
-    user = models.ForeignKey(User, related_name="details")
-    weight = models.IntegerField()
-    height = models.IntegerField()
-    age = models.IntegerField()
-    sex = models.CharField(max_length=6, choices=(('Male', 'Male'), ('Female', 'Female')))
+    user = models.OneToOneField(User, related_name="details")
+    weight = models.IntegerField(_("Waga [kg]"))
+    height = models.IntegerField(_("Wzrost [cm]"))
+    age = models.IntegerField(_("Wiek"), blank=True, null=True)
+    sex = models.CharField( max_length=6, choices=(('Male', 'Male'), ('Female', 'Female')), blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -27,16 +27,22 @@ class Event(models.Model):
 
 class Term(models.Model):
     name = models.CharField(max_length=100)
-    participant = models.ForeignKey(User, related_name="terms")
-    starttime = models.DateTimeField()
-    endtime = models.DateTimeField()
+    participants = models.ManyToManyField(User, through='Enrollment', related_name="terms")
+    starttime = models.DateTimeField(blank=True, null=True)
+    endtime = models.DateTimeField(blank=True, null=True)
     event = models.ForeignKey(Event, related_name="terms")
 
     def __str__(self):
-        if self.participant is not None:
-            status = self.participant.username
+        if len(self.participants.all()):
+            status = ', '.join(user.last_name for user in self.participants.all() )
         else:
-            status = "free"
-        return "%s (%s, %s, %s)" % (self.name, self.starttime, self.endtime, status)
+            status = "Wolny"
+        return "%s (%s)" % (self.name, status)
 
 
+class Enrollment(models.Model):
+    user = models.ForeignKey(User, related_name="enrollments")
+    term = models.ForeignKey(Term, related_name="enrollments")
+
+    class Meta:
+        unique_together = ('user', 'term')

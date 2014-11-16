@@ -1,12 +1,12 @@
+from allauth.account import views
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-import enrollapp
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'enroll.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('enrollapp.urls')),
+                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^', include('enrollapp.urls')),
+                       url('^social/', include('allauth.socialaccount.urls')),
+                       url('^fb/', include('allauth.socialaccount.providers.facebook.urls')),
+                       url(r"^logout/$", views.logout, name="account_logout"),
 )
