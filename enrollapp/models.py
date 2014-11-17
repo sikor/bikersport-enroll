@@ -46,7 +46,7 @@ class Term(models.Model):
             status = ', '.join(user.first_name for user in self.participants.all())
         else:
             status = "Pusty"
-        return "%s (%s)" % (self.name, status)
+        return "%s (%s) %s" % (self.name, status, self.starttime.time())
 
 
 class Enrollment(models.Model):
