@@ -29,7 +29,7 @@
                 <table class="table">
                     {% for term in event.terms.all %}
                         <tr>
-                            <td>{{ term.name|default:"" }}</td>
+                            <td>{{ term.name|default:"" }} ({{ term.starttime }}) </td>
                             <td>
                                 {% if term.participants.all %}
                                     {% for participant in term.participants.all %}
@@ -77,7 +77,6 @@
                             </div>
                         </div>
                     </form>
-
                 {% endif %}
 
 
