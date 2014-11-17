@@ -1,14 +1,23 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 
 
+def validate_weight(value):
+    if value < 30:
+        raise ValidationError('Za mała waga.')
+
+def validate_height(value):
+    if value < 50:
+        raise ValidationError('Za mały wzrost')
+
 class UserDetails(models.Model):
     user = models.OneToOneField(User, related_name="details")
-    weight = models.IntegerField(_("Waga [kg]"))
-    height = models.IntegerField(_("Wzrost [cm]"))
+    weight = models.IntegerField(_("Waga [kg]"), validators=[validate_weight])
+    height = models.IntegerField(_("Wzrost [cm]"), validators=[validate_height])
     age = models.IntegerField(_("Wiek"), blank=True, null=True)
     sex = models.CharField(max_length=6, choices=(('Male', 'Male'), ('Female', 'Female')), blank=True, null=True)
 

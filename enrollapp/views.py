@@ -8,6 +8,8 @@ from enrollapp.models import Event, Term, Enrollment, UserDetails
 
 class EnrollForm(forms.Form):
     term = forms.ChoiceField(label="Termin")
+    rules = forms.BooleanField(label='',
+                               required=True)
 
     def __init__(self, *args, **kwargs):
         event = kwargs.pop("event")
@@ -20,22 +22,33 @@ class EnrollForm(forms.Form):
         self.fields['term'].choices = tuple(choices)
 
 
-
-
-def event(request, urlname):
-    event = Event.objects.get(urlname=urlname)
-    form = EnrollForm(event=event)
+def get_user_details_form(request):
     if len(UserDetails.objects.filter(user=request.user.id)) > 0:
         user_form = UserDetailsForm(instance=request.user.details)
     else:
         user_form = UserDetailsForm()
+    return user_form
+
+
+def get_user_term(event, request):
     term = None
     if request.user.is_active:
         terms = Term.objects.filter(event=event, participants=request.user)
         if len(terms) > 0:
             term = terms[0]
+    return term
+
+
+def render_event(request, urlname, enroll_form=None, user_form=None, event=None):
+    event = event or Event.objects.get(urlname=urlname)
+    user_form = user_form or get_user_details_form(request)
+    form = enroll_form or EnrollForm(event=event)
+    term = get_user_term(event, request)
     return render(request, 'enrollapp/event.html', {'event': event, 'user': request.user, 'enroll_form': form,
                                                     'term': term, 'user_form': user_form})
+
+def event(request, urlname):
+    return render_event(request, urlname)
 
 
 def index(request):
@@ -55,6 +68,8 @@ def enroll(request, urlname):
                 if len(term.participants.all()) < 2:
                     enrollment = Enrollment(user=request.user, term=term)
                     enrollment.save()
+        else:
+            return render_event(request, urlname, enroll_form=form, event=event)
     return redirect('event', event.urlname)
 
 
@@ -66,6 +81,7 @@ def unenroll(request, urlname):
         enrollment = Enrollment.objects.get(user=request.user, term=term)
         enrollment.delete()
     return redirect('event', urlname)
+
 
 class UserDetailsForm(forms.ModelForm):
     class Meta:
@@ -85,5 +101,7 @@ def user_details(request, urlname):
             details = form.save(commit=False)
             details.user = user
             details.save()
+        else:
+            return render_event(request, urlname, user_form=form)
 
     return redirect('event', urlname)
