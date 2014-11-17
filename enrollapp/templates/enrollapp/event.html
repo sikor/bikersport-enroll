@@ -19,34 +19,6 @@
     </div>
     <div class="row">
         <div class="col-md-8">
-            <div class="panel panel-default">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Terminy</div>
-                <div class="panel-body">
-                    <p>Każdy użytkownik może się zapisać na jeden termin.</p>
-                </div>
-
-                <table class="table">
-                    {% for term in event.terms.all %}
-                        <tr>
-                            <td>{{ term.name|default:"" }} ({{ term.starttime }})</td>
-                            <td>
-                                {% if term.participants.all %}
-                                    {% for participant in term.participants.all %}
-                                        <a href="{{ participant.socialaccount_set.get.extra_data.link|default:"#" }}"
-                                           target="_blank">
-                                            {{ participant.first_name }}
-                                            {{ participant.last_name }}</a><br/>
-                                    {% endfor %}
-                                {% else %}
-                                    Wolny
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-
             {% if user.is_active %}
                 {% if term %}
                     <p>Jesteś zapisany na termin: {{ term }}</p>
@@ -59,7 +31,8 @@
                         </div>
                     </form>
                 {% else %}
-                    <p>Można wybrać dogodny termin i się zapisać</p>
+                    <br />
+                    <h4>Możesz wybrać dogodny termin i się zapisać</h4>
                     <form action="{% url 'enroll' event.urlname %}" method="post" role="form" class="form-horizontal">
                         {% csrf_token %}
                         <div class="form-group">
@@ -73,7 +46,7 @@
                         <div class="form-group">
                             <div class="col-sm-12"><p>{{ enroll_form.rules }} Zapoznałem się z regulaminem:
                                 <a href="http://www.bikersport.pl/REGULAMIN.pdf"
-                                    target="_blank">"Zimowy Puchar INDOOR UPHILL-BIKERSPORT"</a></p>
+                                   target="_blank">"Zimowy Puchar INDOOR UPHILL-BIKERSPORT"</a></p>
                                 {{ enroll_form.rules.errors }}
                             </div>
                         </div>
@@ -81,7 +54,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Zapisz się</button>
+                                <button type="submit" class="btn btn-default">Zapisz mnie!</button>
                             </div>
                         </div>
                     </form>
@@ -91,9 +64,10 @@
 
             {% endif %}
         </div>
-        {% if user.is_active %}
-            <div class="col-md-4">
-                <h3>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych informacji:</h3>
+
+        <div class="col-md-4">
+            {% if user.is_active %}
+                <h4>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych informacji:</h4>
 
                 <form action="{% url 'user_details' event.urlname %}" method="post" role="form" class="form-horizontal">
                     {% csrf_token %}
@@ -113,9 +87,42 @@
                         </div>
                     </div>
                 </form>
-            </div>
+
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Terminy</div>
+            <div class="panel-body">
+                <p>Każdy użytkownik może się zapisać na jeden termin.</p>
             </div>
 
-        {% endif %}
+            <table class="table">
+                {% for term in event.terms.all %}
+                    <tr>
+                        <td>{{ term.name|default:"" }} ({{ term.starttime }})</td>
+                        <td>
+                            {% if term.participants.all %}
+                                {% for participant in term.participants.all %}
+                                    <a href="{{ participant.socialaccount_set.get.extra_data.link|default:"#" }}"
+                                       target="_blank">
+                                        {{ participant.first_name }}
+                                        {{ participant.last_name }}</a><br/>
+                                {% endfor %}
+                            {% else %}
+                                Wolny
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <p class="footer">© BIKERSPORT 2014</p>
+    </div>
 
 {% endblock %}
