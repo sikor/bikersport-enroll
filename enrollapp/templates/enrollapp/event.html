@@ -8,10 +8,10 @@
                 <h1>{{ event.name }}</h1>
             </div>
             {% if user.is_anonymous %}
-                <a href="{% provider_login_url "facebook" method="js_sdk" next=request.path %}">W celu zapisania się na
+               <strong> <a href="{% provider_login_url "facebook" method="js_sdk" next=request.path %}">W celu zapisania się na
                     zawody
                     kliknij
-                    tutaj.</a>
+                    tutaj.</a> </strong>
             {% else %}
                 <h2>Witaj {{ user.first_name }}</h2>
             {% endif %}
