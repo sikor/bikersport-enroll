@@ -31,8 +31,8 @@
                         </div>
                     </form>
                 {% else %}
-                    <br />
-                    <h4>Możesz wybrać dogodny termin i się zapisać</h4>
+                    <br/>
+                    <h4>Wybierz dogodny termin i zapisz się</h4>
                     <form action="{% url 'enroll' event.urlname %}" method="post" role="form" class="form-horizontal">
                         {% csrf_token %}
                         <div class="form-group">
@@ -67,7 +67,7 @@
 
         <div class="col-md-4">
             {% if user.is_active %}
-                <h4>Aby skonfigurować stanowisko startowe potrzebujemy dodatkowych informacji:</h4>
+                <h4>Aby skonfigurować trenażer potrzebujemy dodatkowych informacji:</h4>
 
                 <form action="{% url 'user_details' event.urlname %}" method="post" role="form" class="form-horizontal">
                     {% csrf_token %}
@@ -122,7 +122,6 @@
             </table>
         </div>
 
-        <p class="footer">© BIKERSPORT 2014</p>
     </div>
 
 {% endblock %}

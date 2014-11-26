@@ -17,11 +17,22 @@
 
 
 
-<div class="container">
 {% if user.is_authenticated %}
-    <a href="{% url 'account_logout' %}?next={{ request.path }}">Wyloguj się</a>
+    <div class="login">
+     <strong>   <a href="{% url 'account_logout' %}?next={{ request.path }}">Wyloguj się</a></strong>
+    </div>
 {% endif %}
-{% block content %}{% endblock %}
+
+<div class="container">
+
+    {% block content %}{% endblock %}
+        <div class="sponsors">
+            <a href="http://sklep.bikersport.pl"><img src="/static/enrollapp/img/bs_logo.jpg"></a>
+            <a href="http://www.shimano-polska.com/publish/content/global_cycle/pl/pl/index/merken/elite.html"><img src="/static/enrollapp/img/LOGO_ELITE.jpg"></a>
+            <a href="http://www.shimano-polska.com/publish/content/global_cycle/pl/pl/index/merken/continental0.html"><img src="/static/enrollapp/img/continental_logo.png"></a>
+            <a href="http://www.shimano-polska.com/"><img src="/static/enrollapp/img/Shimano-Logo.jpg"></a>
+        </div>
+        <p class="footer">© BIKERSPORT 2014</p>
 </div>
 
 
