@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Zimowy Puchar INDOOR UPHILL-BIKERSPORT</h1>
-    <ul>
+    <ul id="eventsList">
         {% for event in events %}
             <li><a href="{% url 'event' event.urlname %}">{{ event.name }}</a></li>
         {% endfor %}

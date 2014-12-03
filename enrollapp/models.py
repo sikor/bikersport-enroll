@@ -35,19 +35,26 @@ class Event(models.Model):
 
 
 class Term(models.Model):
+    MAX_USERS_PER_TERM = 2
     name = models.CharField(max_length=100)
     participants = models.ManyToManyField(User, through='Enrollment', related_name="terms")
     starttime = models.DateTimeField(blank=True, null=True)
     endtime = models.DateTimeField(blank=True, null=True)
     event = models.ForeignKey(Event, related_name="terms")
 
+    def slots_remaining(self):
+        return max(0, Term.MAX_USERS_PER_TERM - len(self.participants.all()))
+
     def __str__(self):
         if len(self.participants.all()):
             status = ', '.join(user.first_name for user in self.participants.all())
         else:
             status = "Pusty"
-        return "%s - %s" % (self.name, self.starttime.time())
 
+        if self.starttime is not None:
+            return "%s - %s" % (self.name, self.starttime.time())
+        else:
+            return self.name
 
 class Enrollment(models.Model):
     user = models.ForeignKey(User, related_name="enrollments")

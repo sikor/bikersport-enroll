@@ -65,7 +65,7 @@ def enroll(request, urlname):
             terms = Term.objects.filter(event=event, participants=request.user)
             if len(terms) == 0:
                 term = Term.objects.get(pk=form.cleaned_data['term'])
-                if len(term.participants.all()) < 2:
+                if len(term.participants.all()) < Term.MAX_USERS_PER_TERM:
                     enrollment = Enrollment(user=request.user, term=term)
                     enrollment.save()
         else:

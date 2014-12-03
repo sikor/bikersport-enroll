@@ -19,7 +19,7 @@
 
 {% if user.is_authenticated %}
     <div class="login">
-     <strong><a href="{% url 'account_logout' %}?next={{ request.path }}">Wyloguj się</a></strong>
+     <strong><a href="{% url 'account_logout' %}?next=/">Wyloguj się</a></strong>
     </div>
 {% endif %}
 
