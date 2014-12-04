@@ -11,6 +11,7 @@ class TermInline(admin.TabularInline):
 class EventAdmin(admin.ModelAdmin):
     inlines = (TermInline,)
 
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Term)
 admin.site.register(UserDetails)

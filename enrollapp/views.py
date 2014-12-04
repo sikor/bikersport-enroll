@@ -6,20 +6,27 @@ from django.shortcuts import render, redirect
 from enrollapp.models import Event, Term, Enrollment, UserDetails
 
 
-class EnrollForm(forms.Form):
-    term = forms.ChoiceField(label="Termin")
+class EnrollmentForm(forms.ModelForm):
     rules = forms.BooleanField(label='',
                                required=True)
 
+    class Meta:
+        model = Enrollment
+        fields = ['term', 'rules', 'user']
+
     def __init__(self, *args, **kwargs):
-        event = kwargs.pop("event")
-        super(EnrollForm, self).__init__(*args, **kwargs)
-        terms = Term.objects.filter(event=event)
+        self.request_event = kwargs.pop("event")
+        self.request_user = kwargs.pop("user")
+        super(EnrollmentForm, self).__init__(*args, initial={'user': self.request_user}, **kwargs)
+        terms = Term.objects.filter(event=self.request_event)
         choices = []
         for term in terms:
-            if len(term.participants.all()) < 2:
+            if term.participants.count() < 2:
                 choices.append((term.id, str(term)))
         self.fields['term'].choices = tuple(choices)
+
+    def clean_user(self):
+        return self.request_user
 
 
 def get_user_details_form(request):
@@ -42,10 +49,11 @@ def get_user_term(event, request):
 def render_event(request, urlname, enroll_form=None, user_form=None, event=None):
     event = event or Event.objects.get(urlname=urlname)
     user_form = user_form or get_user_details_form(request)
-    form = enroll_form or EnrollForm(event=event)
+    form = enroll_form or EnrollmentForm(event=event, user=request.user)
     term = get_user_term(event, request)
     return render(request, 'enrollapp/event.html', {'event': event, 'user': request.user, 'enroll_form': form,
                                                     'term': term, 'user_form': user_form})
+
 
 def event(request, urlname):
     return render_event(request, urlname)
@@ -57,17 +65,12 @@ def index(request):
 
 
 @login_required
-def enroll(request, urlname):
+def enroll_user(request, urlname):
     event = Event.objects.get(urlname=urlname)
     if request.method == 'POST':
-        form = EnrollForm(request.POST, event=event)
+        form = EnrollmentForm(request.POST, event=event, user=request.user)
         if form.is_valid():
-            terms = Term.objects.filter(event=event, participants=request.user)
-            if len(terms) == 0:
-                term = Term.objects.get(pk=form.cleaned_data['term'])
-                if len(term.participants.all()) < Term.MAX_USERS_PER_TERM:
-                    enrollment = Enrollment(user=request.user, term=term)
-                    enrollment.save()
+            form.save()
         else:
             return render_event(request, urlname, enroll_form=form, event=event)
     return redirect('event', event.urlname)
