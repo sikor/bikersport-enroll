@@ -82,5 +82,8 @@ class Enrollment(models.Model):
         if self.term.participants.count() >= Term.MAX_USERS_PER_TERM:
             raise ValidationError('Brak wolnych miejsc w tym terminie.')
 
+        if UserDetails.objects.filter(user=self.user).count() == 0:
+            raise ValidationError('Zanim się zapiszesz musisz uzupełnić dane do konfiguracji trenażera.')
+
     class Meta:
         unique_together = ('user', 'term')

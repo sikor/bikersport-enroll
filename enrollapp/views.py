@@ -96,7 +96,7 @@ class UserDetailsForm(forms.ModelForm):
 def user_details(request, urlname):
     user = request.user
     if request.method == 'POST':
-        if len(UserDetails.objects.filter(user=user)) > 0:
+        if UserDetails.objects.filter(user=user).count() > 0:
             form = UserDetailsForm(request.POST, instance=request.user.details)
         else:
             form = UserDetailsForm(request.POST)
